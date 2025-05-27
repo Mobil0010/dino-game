@@ -91,8 +91,11 @@
         },
         body: JSON.stringify({ username: id, password: pw, nickname }),
       })
-        .then(res => {
-          if (!res.ok) throw new Error("회원가입 실패");
+        .then(async res => {
+          if (!res.ok) {
+            const errorText = await res.text(); // 서버에서 전달한 에러 메시지
+            throw new Error(errorText);
+          }
           return res.json();
         })
         .then(data => {
@@ -100,7 +103,16 @@
           location.href = "index.html";
         })
         .catch(err => {
-          alert("회원가입 중 오류 발생");
+          const msg = err.message;
+
+          if (msg.includes("아이디")) {
+            alert("이미 사용 중인 아이디입니다.");
+          } else if (msg.includes("닉네임")) {
+            alert("이미 사용 중인 닉네임입니다.");
+          } else {
+            alert("회원가입 중 오류 발생");
+          }
+
           console.error(err);
         });
     }
