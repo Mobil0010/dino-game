@@ -23,8 +23,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public User signup(@RequestBody User user) {
-        return userService.register(user);
+    public ResponseEntity<?> signup(@RequestBody User user) {
+        try {
+            User saved = userService.register(user);
+            return ResponseEntity.ok(saved);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());  // 프론트에 메시지 전달
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("회원가입 실패");
+        }
     }
 
     @PostMapping("/login")
