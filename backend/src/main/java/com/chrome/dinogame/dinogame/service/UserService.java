@@ -14,6 +14,12 @@ public class UserService {
     private UserRepository userRepository;
 
     public User register(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        throw new RuntimeException("이미 존재하는 아이디입니다.");
+        }
+        if (userRepository.findByNickname(user.getNickname()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+        }
         return userRepository.save(user);
     }
 
