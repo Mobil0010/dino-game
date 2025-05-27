@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 300px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      height: 36px;
+      margin: 10px 0;
+      padding: 0 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      height: 36px;
+      margin-top: 10px;
+      font-size: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #welcome {
+      margin: 20px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>로그인</h2>
+
+    <!-- 로그인 입력 폼 -->
+    <div id="loginForm">
+      <input type="text" id="id" placeholder="아이디">
+      <input type="password" id="pw" placeholder="비밀번호">
+      <button onclick="login()" id="loginBtn">로그인</button>
+      <button onclick="location.href='signup.html'" id="signupBtn">회원가입</button>
+    </div>
+
+    <!-- 로그인 후 메시지 -->
+    <div id="welcome" class="hidden"></div>
+    <button onclick="logout()" id="logoutBtn" class="hidden">로그아웃</button>
+
+    <!-- 게임 시작 버튼은 항상 표시 -->
+    <button onclick="startGame()">게임 시작</button>
+  </div>
+
+  <script>
+    function login() {
+      const username = document.getElementById('id').value;
+      const password = document.getElementById('pw').value;
+
+      fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("로그인 실패");
+          return res.json();
+        })
+        .then((user) => {
+          localStorage.setItem("currentUser", JSON.stringify(user));
+          alert("로그인 성공");
+          updateUI();
+        })
+        .catch((err) => {
+          alert("아이디 또는 비밀번호가 틀렸습니다.");
+          console.error(err);
+        });
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      alert('로그아웃 되었습니다.');
+      updateUI();
+    }
+
+    function startGame() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) {
+        alert('로그인 후 이용해주세요.');
+      } else {
+        location.href = 'game.html';
+      }
+    }
+
+    function updateUI() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      const loginForm = document.getElementById('loginForm');
+      const welcome = document.getElementById('welcome');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const loginBtn = document.getElementById('loginBtn');
+      const signupBtn = document.getElementById('signupBtn');
+
+      if (user) {
+        loginForm.classList.add('hidden');
+        welcome.textContent = `${user.nickname}님 환영합니다!`;
+        welcome.classList.remove('hidden');
+        logoutBtn.classList.remove('hidden');
+      } else {
+        loginForm.classList.remove('hidden');
+        welcome.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+      }
+    }
+
+    // 페이지 로드 시 UI 갱신
+    window.onload = updateUI;
+  </script>
+</body>
+</html>

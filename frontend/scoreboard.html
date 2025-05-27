@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>점수판</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+
+    .btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 점수판</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>순위</th>
+        <th>사용자명</th>
+        <th>점수</th>
+        <th>플레이 시간</th>
+      </tr>
+    </thead>
+    <tbody id="scoreboard">
+      <!-- 점수 데이터가 여기에 삽입됩니다 -->
+    </tbody>
+  </table>
+
+  <button class="btn" onclick="goBack()">뒤로 가기</button>
+
+  <script>
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    // 로그인된 사용자 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser.id) {
+      alert('로그인이 필요합니다.');
+      location.href = 'index.html';
+    }
+
+    fetch(`http://localhost:8080/score/user/${currentUser.id}`)
+      .then(res => res.json())
+      .then(data => {
+        data.sort((a, b) => b.value - a.value);
+
+        const scoreboard = document.getElementById("scoreboard");
+        data.forEach((score, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${currentUser.nickname}</td>
+            <td>${score.value}</td>
+            <td>${score.playTime}s</td>
+          `;
+          scoreboard.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('점수 불러오기 실패:', error);
+        alert('점수 데이터를 불러오는 데 실패했습니다.');
+      });
+  </script>
+</body>
+</html>
