@@ -18,7 +18,7 @@ import com.chrome.dinogame.dinogame.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class UserController {
 
     @Autowired
