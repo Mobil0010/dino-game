@@ -1,5 +1,6 @@
 package com.chrome.dinogame.dinogame.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,13 @@ public class UserController {
             User saved = userService.register(user);
             return ResponseEntity.ok(saved);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());  // 프론트에 메시지 전달
+            return ResponseEntity.badRequest().body(
+                Map.of("error", e.getMessage()) // JSON 형식으로
+            );
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("회원가입 실패");
+            return ResponseEntity.internalServerError().body(
+                Map.of("error", "회원가입 실패")
+            );
         }
     }
 
