@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.chrome.dinogame.dinogame.entity.User;
 import com.chrome.dinogame.dinogame.service.UserService;
@@ -35,6 +36,12 @@ public class UserController {
                 Map.of("error", e.getMessage()) // JSON 형식으로
             );
         } catch (Exception e) {
+            if (e instanceof ResponseStatusException rse) {
+                return ResponseEntity.status(rse.getStatusCode()).body(
+                    Map.of("error", rse.getReason())
+                );
+            }
+
             return ResponseEntity.internalServerError().body(
                 Map.of("error", "회원가입 실패")
             );

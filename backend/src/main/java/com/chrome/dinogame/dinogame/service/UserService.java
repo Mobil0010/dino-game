@@ -20,7 +20,6 @@ public class UserService {
         System.out.println(">>> 회원가입 시도: " + user.getUsername() + ", " + user.getPassword() + ", " + user.getNickname());
 
         try {
-
             if (userRepository.findByUsername(user.getUsername()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username already exists");
             }

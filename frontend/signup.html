@@ -98,7 +98,7 @@
           if (contentType && contentType.includes("application/json")) {
             data = await res.json();
           } else {
-            data = await res.text(); // HTML이나 텍스트면 text로 처리
+            data = await res.text();
           }
 
           if (!res.ok) {
@@ -110,19 +110,21 @@
               } else {
                 alert("회원가입 실패: " + data);
               }
-            } else {
-              alert("회원가입 실패 (예상치 못한 오류)");
+            } else if (typeof data === 'object' && data.error) {
+              if (data.error.includes("username")) {
+                alert("이미 존재하는 아이디입니다.");
+              } else if (data.error.includes("nickname")) {
+                alert("이미 존재하는 닉네임입니다.");
+              } else {
+                alert("회원가입 실패: " + data.error);
+              }
             }
-            throw new Error(data);
+            throw new Error(JSON.stringify(data));
           }
 
           alert("회원가입 성공! 로그인 해주세요.");
           location.href = "index.html";
         })
-        .catch(err => {
-          console.error(err);
-          alert("서버와의 통신 중 오류가 발생했습니다.");
-        });
     }
   </script>
 </body>
