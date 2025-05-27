@@ -3,7 +3,7 @@ WORKDIR /app
 COPY --chown=gradle:gradle . .
 RUN chmod +x ./gradlew && ./gradlew build --no-daemon
 
-FROM openjdk:17-jdk-alpine
+FROM openjdk:17
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
