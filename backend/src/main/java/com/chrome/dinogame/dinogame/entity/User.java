@@ -11,7 +11,6 @@ public class User {
     private String password;
     private String nickname;
 
-    // 생성자, 게터, 세터
     public User() {}
 
     public User(String username, String password, String nickname) {

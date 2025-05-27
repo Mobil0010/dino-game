@@ -15,17 +15,29 @@ public class UserService {
     private UserRepository userRepository;
 
     public User register(User user) {
-        // 아이디 중복 확인
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        }
+        System.out.println(">>> 회원가입 시도: " + user.getUsername() + ", " + user.getPassword() + ", " + user.getNickname());
 
-        // 닉네임 중복 확인
-        if (userRepository.findByNickname(user.getNickname()).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        try {
+            if (user.getUsername() == null || user.getPassword() == null || user.getNickname() == null) {
+                throw new IllegalArgumentException("입력값 누락");
+            }
+
+            if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+                throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+            }
+
+            if (userRepository.findByNickname(user.getNickname()).isPresent()) {
+                throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            }
+
+            return userRepository.save(user);
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 콘솔 출력
+            throw e; // 다시 던져서 Controller에서 처리
         }
-        return userRepository.save(user);
     }
+
 
     public Optional<User> login(String username, String password) {
         return userRepository.findByUsername(username)
