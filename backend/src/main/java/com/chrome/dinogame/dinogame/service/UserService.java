@@ -3,7 +3,9 @@ package com.chrome.dinogame.dinogame.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.chrome.dinogame.dinogame.entity.User;
 import com.chrome.dinogame.dinogame.repository.UserRepository;
@@ -23,11 +25,10 @@ public class UserService {
             }
 
             if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-                throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username already exists");
             }
-
             if (userRepository.findByNickname(user.getNickname()).isPresent()) {
-                throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "nickname already exists");
             }
 
             return userRepository.save(user);
