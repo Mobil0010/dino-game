@@ -44,8 +44,8 @@ chmod +x start-dino-game.sh
 ./start-dino-game.sh
 ```
 3. 자동으로 아래 작업이 진행됩니다.
-- GitHub 저장소 클론
-- Docker 이미지 빌드 및 컨테이너 실행
+   - GitHub 저장소 클론
+   - Docker 이미지 빌드 및 컨테이너 실행
 4. 실행 완료 후 아래 메시지가 표시됩니다.
 ```Text
 [3/4] 서버가 실행 중입니다. 종료하려면 'exit'을 입력하세요.
