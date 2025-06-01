@@ -78,8 +78,7 @@
     function goBack() {
       window.location.href = "index.html";
     }
-
-    // 로그인된 사용자 체크
+    
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser || !currentUser.id) {
       alert('로그인이 필요합니다.');

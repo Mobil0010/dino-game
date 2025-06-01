@@ -33,7 +33,7 @@ public class UserController {
             return ResponseEntity.ok(saved);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
-                Map.of("error", e.getMessage()) // JSON 형식으로
+                Map.of("error", e.getMessage())
             );
         } catch (Exception e) {
             if (e instanceof ResponseStatusException rse) {

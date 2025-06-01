@@ -30,8 +30,8 @@ public class UserService {
             return userRepository.save(user);
 
         } catch (Exception e) {
-            e.printStackTrace(); // 콘솔 출력
-            throw e; // 다시 던져서 Controller에서 처리
+            e.printStackTrace();
+            throw e;
         }
     }
 
