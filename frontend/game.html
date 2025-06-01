@@ -129,6 +129,22 @@
       #cactus { width: 15px; height: 30px; }
       #pterodactyl { width: 30px; height: 15px; }
     }
+
+    /* 게임 오버 UI 스타일 */
+    #game-over {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +163,13 @@
   </div>
 
   <div id="score">Score: 0</div>
+
+  <!-- 게임 오버 UI -->
+  <div id="game-over">
+    <div id="game-over-text">게임 오버!</div>
+    <div id="game-over-score"></div>
+    <button onclick="restartGame()" style="margin-top:20px; padding:10px 20px;">다시 시작</button>
+  </div>
 
   <script>
     const dino = document.getElementById("dino");
@@ -171,12 +194,13 @@
     const MAX_CONSECUTIVE = 3;
 
     let startTime = Date.now(); // 게임 시작 시간 저장
+    let gameOver = false;
 
     document.addEventListener("keydown", handleJump);
     document.addEventListener("touchstart", handleJump);
 
     function handleJump(e) {
-      if ((e.code === "Space" || e.type === "touchstart") && !isJumping) {
+      if ((e.code === "Space" || e.type === "touchstart") && !isJumping && !gameOver) {
         isJumping = true;
         jumpVelocity = 12;
         dino.style.animation = "scaleJump 0.4s ease-out";
@@ -213,10 +237,12 @@
     }
 
     function updateScore() {
-      score++;
-      scoreText.textContent = "Score: " + score;
-      if (score % 100 === 0) speed += 0.5;
-      updateDayNight();
+      if (!gameOver) {
+        score++;
+        scoreText.textContent = "Score: " + score;
+        if (score % 100 === 0) speed += 0.5;
+        updateDayNight();
+      }
     }
 
     function resetObstacle() {
@@ -247,6 +273,8 @@
     }
 
     function gameLoop() {
+      if (gameOver) return;
+
       if (isJumping) {
         dinoBottom += jumpVelocity;
         jumpVelocity -= gravity;
@@ -272,12 +300,12 @@
         (obstacleIsCactus && isCollision(dinoRect, cactusRect)) ||
         (!obstacleIsCactus && isCollision(dinoRect, pteroRect))
       ) {
-        alert("게임 오버! 점수: " + score);
         const playTime = Math.floor((Date.now() - startTime) / 1000);
-        saveScore(score, playTime); // 점수 저장
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        saveScore(score, playTime);
+        gameOver = true;
+
+        document.getElementById("game-over").style.display = "flex";
+        document.getElementById("game-over-score").innerText = `점수: ${score}`;
         return;
       }
 
@@ -310,7 +338,6 @@
 
     gameLoop();
 
-    // 점수 저장 함수
     function saveScore(score, playTime) {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (!currentUser || !currentUser.id) {
@@ -342,6 +369,10 @@
         console.error('점수 저장 오류:', error);
         alert('점수 저장에 실패했습니다.');
       });
+    }
+
+    function restartGame() {
+      window.location.reload();
     }
   </script>
 
